@@ -3,6 +3,12 @@ package xxx.pju.alhambra;
 import java.io.Serializable;
 import java.util.EnumMap;
 
+
+/**
+ * Represents the hand 
+ * @author paulu
+ *
+ */
 public class Hand extends CardSet implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -22,22 +22,15 @@ public class Alhambra implements Serializable {
 	 * @author paulu
 	 *
 	 */
-	public static class Point implements Serializable {
+	private static class Point implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private int x = 0;
 		private int y = 0;
-		public Point() {}
 		public int getX() {
 			return x;
 		}
-		public void setX(int x) {
-			this.x = x;
-		}
 		public int getY() {
 			return y;
-		}
-		public void setY(int y) {
-			this.y = y;
 		}
 		public Point(int x, int y) {
 			super();
@@ -51,6 +44,7 @@ public class Alhambra implements Serializable {
 			y += o.y;
 		}
 		
+		@SuppressWarnings("unused")
 		Point add(Point o) {
 			if (o == null) return this;
 			Point p = this;
@@ -114,7 +108,7 @@ public class Alhambra implements Serializable {
 		 * farthest up that any tile had been inserted, maxY would be 4, one 
 		 * more than that.  If a new tile is inserted at 4, then maxY gets
 		 * incremented.  Notice that will all the bounds start at 0, when the
-		 * gerden is inserted, the maxes and mins all change value.
+		 * garden is inserted, the maxes and mins all change value.
 		 * @param x the left-right location
 		 * @param y the up-down location
 		 * @param t tile to insert
@@ -271,7 +265,10 @@ public class Alhambra implements Serializable {
 			return tileArray;
 		}
 	}
-			
+
+	/**
+	 * Empty constructor
+	 */
 	public Alhambra() {
 	}
 	
@@ -300,6 +297,10 @@ public class Alhambra implements Serializable {
 		return colorCounts;
 	}
 	
+	/**
+	 * Length of the longest wall in the Alhambra
+	 * @return number of wall segments in the longest external wall
+	 */
 	public int longestWall() {
 		// TODO: Provide algorithm for longest wall
 		return 0;
