@@ -1,5 +1,6 @@
 package xxx.pju.alhambra;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -8,9 +9,10 @@ import java.util.Arrays;
 
 import com.google.common.collect.ImmutableMap;
 
-public class Scorer {
+public class Scorer implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private EnumMap<PlayerColor, Player> players;
-	private static class ColorScore {
+	private static final class ColorScore {
 		private static final ImmutableMap<Tile.Family, List<Integer>> first =
 			       new ImmutableMap.Builder<Tile.Family, List<Integer>>()
 			           .put(Tile.Family.blue, Arrays.asList(1, 0, 0))
@@ -64,7 +66,10 @@ public class Scorer {
 			int totalVal = 0;
 			for (int i = 0; i < sharers; i++) {
 				List<Integer> scoreForColor = roundMap.get(color);
-				int slotVal = scoreForColor.get(rank + i);
+				int slotVal = 0;
+				// This might well happen when there are more than 3 players
+				if (rank + i < scoreForColor.size())
+					slotVal = scoreForColor.get(rank + i);
 				totalVal += slotVal;
 			}
 			return totalVal / sharers;
@@ -115,18 +120,24 @@ public class Scorer {
 			}
 			// Determine order
 			Collections.<PlayerRank>sort(bldgAchievement);
-			for (int i = 0; i < bldgAchievement.size(); i++) {
+			// Assign scores
+			for (int rankForColor = 0; 
+					rankForColor < bldgAchievement.size(); 
+					rankForColor++) 
+			{
+				// Determine how many players share the score
 				int sharers = 1;
-				Integer numBs = bldgAchievement.get(i).getNumOfColor();
-				for (int j = i + 1; 
+				Integer numBs = bldgAchievement.get(rankForColor).getNumOfColor();
+				for (int j = rankForColor + 1; 
 						j <  bldgAchievement.size() &&
 						bldgAchievement.get(j).getNumOfColor() == numBs;
 						j++) {
 					sharers++;
 				}
+				// Where sharers > 1, score will be reflect rank and sharers
 				for (int k = 0; k < sharers; k++) {
 					PlayerColor curPlayer = 
-							bldgAchievement.get(k + i).getMeeple();
+							bldgAchievement.get(k + rankForColor).getMeeple();
 					Integer prevScore = scorePerPlayer.get(curPlayer);
 					scorePerPlayer.put(
 							curPlayer, 
@@ -135,13 +146,14 @@ public class Scorer {
 									ColorScore.lookupScore
 									(
 											round, 
-											i, 
+											rankForColor, 
 											sharers, 
 											bldgType
 									)
 							)
 					);
 				}
+				rankForColor += sharers - 1;
 			}
 		}
 
