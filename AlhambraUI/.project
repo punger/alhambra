@@ -3,6 +3,7 @@
 	<name>AlhambraUI</name>
 	<comment></comment>
 	<projects>
+		<project>Alhambra</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
