@@ -1,4 +1,4 @@
-package xxx.pju.alhambra;
+package name.pju.alhambra;
 
 /**
  * Abstract base class for all cards

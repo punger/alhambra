@@ -1,4 +1,4 @@
-package xxx.pju.alhambra;
+package name.pju.alhambra;
 
 import java.io.Serializable;
 import java.util.HashSet;

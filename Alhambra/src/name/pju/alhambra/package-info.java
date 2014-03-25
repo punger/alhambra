@@ -5,4 +5,4 @@
  * @author paulu
  *
  */
-package xxx.pju.alhambra.persist;
+package name.pju.alhambra;

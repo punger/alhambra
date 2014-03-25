@@ -1,4 +1,4 @@
-package xxx.pju.alhambra;
+package name.pju.alhambra;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import xxx.pju.alhambra.Tile.Family;
+import name.pju.alhambra.Tile.Family;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;

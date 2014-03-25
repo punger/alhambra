@@ -1,4 +1,4 @@
-package xxx.pju.alhambra;
+package name.pju.alhambra;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
