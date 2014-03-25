@@ -11,8 +11,14 @@ public class Exchange implements Serializable {
 	private static final int MULTICARDSUM = 5;
 	/** Available places for cards */
 	private Card slots[] = new Card[4];
-	/** Ponter to the overarching game this exchange participates in */
+	/** Pointer to the overarching game this exchange participates in */
 	private Game g;
+	/**
+	 * Initialize the card exchange with a pointer to the game this exchange
+	 * participates in.  The game is the owner of the deck used to deal into
+	 * the exchange.
+	 * @param g game this exchange is for
+	 */
 	public Exchange(Game g) {
 		this.g = g;
 	}
@@ -35,7 +41,7 @@ public class Exchange implements Serializable {
 	 * Claim a card from a named slot and add it to the target CardSet.
 	 * 
 	 * If the CardSet provided is null, allocate a fresh one.  Only add to 
-	 * the set if the set is empty to start with or the total of the carsd
+	 * the set if the set is empty to start with or the total of the cards
 	 * in the set and the new card claimed is not more than the card claim
 	 * maximum.  If the card was added, clear the slot the card was in so that
 	 * it can be refilled at the end of this user's turn.
@@ -70,7 +76,8 @@ public class Exchange implements Serializable {
 	 * The user chickened out and is returning the cards to their slots without
 	 * actually using them.
 	 * @param cs
-	 * @return
+	 * @return true if all the cards in the provided set could be put back
+	 * in the exchange
 	 */
 	public boolean restoreClaimedCards(CardSet cs) {
 		for (int i = 0; i < slots.length && !cs.isEmpty(); i++) {

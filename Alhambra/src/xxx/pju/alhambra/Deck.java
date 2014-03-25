@@ -3,8 +3,6 @@ package xxx.pju.alhambra;
 import java.util.Collection;
 import java.util.Collections;
 
-import xxx.pju.alhambra.resource.CardList;
-
 /**
  * Represents a deck of cards.
  * 
@@ -19,9 +17,11 @@ public class Deck extends CardSet {
 	private int round1, round2 = 0;
 	/** Collect the discards so that they can be reshuffled if needed */
 	private CardSet discards = new CardSet();
-	/** Instantiate the deck from the external resource cards and shuffle them */
-	public Deck() {
-		super(CardList.getDeck());
+	/** Instantiate the deck from the external resource cards and shuffle them 
+	 * @param cs initial list of cards 
+	 */
+	public Deck(CardSet cs) {
+		cards = cs.cards;
 		Collections.shuffle(cards);
 	}
 	
@@ -38,6 +38,7 @@ public class Deck extends CardSet {
 	/**
 	 * Take a card off the top of the deck if available. Shuffle the discards if
 	 * any when the deck runs out.  Count down to any of the scoring rounds.
+	 * @return next card on the deck if there is one
 	 */
 	public Card deal() {
 		if (isEmpty()) {

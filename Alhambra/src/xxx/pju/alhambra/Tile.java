@@ -1,6 +1,5 @@
 package xxx.pju.alhambra;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,9 +13,7 @@ import java.util.Set;
  * @author paulu
  *
  */
-public class Tile implements Serializable {
-	private static final long serialVersionUID = 1L;
-
+public class Tile {
 	public enum Family {blue, orange, brown, white, green, purple, garden}
 	private Family color;
 	private int cost;

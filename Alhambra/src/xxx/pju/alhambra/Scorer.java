@@ -101,7 +101,7 @@ public class Scorer implements Serializable {
 	}
 	
 	public EnumMap<PlayerColor, Integer> getScores(int round) {
-		EnumMap<PlayerColor, Integer> scorePerPlayer = new EnumMap<>(
+		EnumMap<PlayerColor, Integer> scorePerPlayer = new EnumMap<PlayerColor, Integer>(
 				PlayerColor.class);
 		// Initialize scores to zero
 		for (PlayerColor meeple : players.keySet()) {

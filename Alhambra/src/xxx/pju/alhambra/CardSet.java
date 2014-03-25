@@ -1,6 +1,5 @@
 package xxx.pju.alhambra;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -9,8 +8,7 @@ import java.util.Collection;
  * @author paulu
  *
  */
-public class CardSet implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class CardSet  {
 	/**
 	 * Card storage collection
 	 */

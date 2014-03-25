@@ -28,7 +28,7 @@ public class Hand extends CardSet implements Serializable {
 		return v;
 	}
 	public EnumMap<MarketColor, Integer> values() {
-		EnumMap<MarketColor, Integer> vals = new EnumMap<>(MarketColor.class);
+		EnumMap<MarketColor, Integer> vals = new EnumMap<MarketColor, Integer>(MarketColor.class);
 		for (Card c : cards) {
 			int iv = c.value();
 			MarketColor m = c.getColor();

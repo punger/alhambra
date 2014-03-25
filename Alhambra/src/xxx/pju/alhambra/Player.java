@@ -6,16 +6,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author paulu
+ *
+ */
 public class Player implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Hand hand = new Hand();
-	private Alhambra alh = new Alhambra();
+	private Alhambra alh = null;
 	private List<Tile> reserveBoard;
 	private int score;
-	private Set<Tile> unattached = new HashSet<>();
+	private Set<Tile> unattached = new HashSet<Tile>();
 	private Game g;
 	
 	private int actions = 0;
+	private PlayerColor meeple;
 	
 	public Hand getHand() {
 		return hand;
@@ -31,6 +36,10 @@ public class Player implements Serializable {
 	}
 	public Set<Tile> getUnattached() {
 		return unattached;
+	}
+
+	public PlayerColor getMeeple() {
+		return meeple;
 	}
 
 	private static class PowerSetResolver {
@@ -80,9 +89,12 @@ public class Player implements Serializable {
 	}
 
 
-	public Player(Game g) {
+	public Player(Game g, PlayerColor meeple) {
 		this.g = g;
+		this.meeple = meeple;
+		alh = new Alhambra(g.getGarden());
 	}
+	
 	void addCard(Card c) {
 		hand.addCard(c);
 	}

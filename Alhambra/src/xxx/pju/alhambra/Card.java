@@ -7,8 +7,8 @@ package xxx.pju.alhambra;
  */
 public abstract class Card {
 	public Card() {}
-	abstract MarketColor getColor();
-	abstract int value();
+	public abstract MarketColor getColor();
+	public abstract int value();
 	public String toString() {
 		return '('+getColor().toString()+value()+')';
 	}

@@ -1,6 +1,5 @@
 package xxx.pju.alhambra;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -15,8 +14,7 @@ import java.util.List;
  * @author paulu
  *
  */
-public class Game implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Game {
 
 	/**
 	 * Provides management for the order of play. 
@@ -25,8 +23,7 @@ public class Game implements Serializable {
 	 * time.  It supports discovering the current player and moving on to the
 	 * next player at the end of his turn.
 	 */
-	private static class PlayerOrder implements Serializable {
-		private static final long serialVersionUID = 1L;
+	private static class PlayerOrder {
 		/**
 		 *  Represents the players in order
 		 */
@@ -57,13 +54,13 @@ public class Game implements Serializable {
 		}
 	}
 	private boolean endOfGame = false;
-	private Market mkt = new Market();
+	private Market mkt;
 	private EnumMap<PlayerColor, Player> participants = 
-			new EnumMap<>(PlayerColor.class);
+			new EnumMap<PlayerColor, Player>(PlayerColor.class);
 	private List<Player> players = new ArrayList<Player>();
-	private Deck deck = new Deck();
+	private Deck deck;
 	private Exchange xchg = new Exchange(this);
-	private BagOfTiles tiles = new BagOfTiles();
+	private BagOfTiles tiles;
 	private PlayerOrder turnOrder;
 	private Scorer sc;
 	
@@ -73,7 +70,7 @@ public class Game implements Serializable {
 		List<PlayerColor> meepleList = new ArrayList<PlayerColor>();
 		int leastMoney = 100;
 		for (PlayerColor meeple : geeks) {
-			Player p = new Player(this);
+			Player p = new Player(this, meeple);
 			participants.put(meeple, p);
 			int initialHandValue = 0;
 			while (initialHandValue < 20) {
@@ -98,8 +95,10 @@ public class Game implements Serializable {
 	 * Initialize the game with the players
 	 * @param geeks set of players by color
 	 */
-	public Game (EnumSet<PlayerColor> geeks) {
+	public Game (EnumSet<PlayerColor> geeks, CardSet cs, BagOfTiles bag) {
+		this.deck = new Deck(cs);
 		setupPlayers(geeks);
+		mkt = new Market(bag);
 		populateMarket();
 		fillExchange();
 		deck.assignScoringTimes();
@@ -111,7 +110,7 @@ public class Game implements Serializable {
 	}
 
 	private void populateMarket() {
-		mkt.refill(tiles);
+		mkt.refill();
 	}
 
 	/**
@@ -123,12 +122,12 @@ public class Game implements Serializable {
 	 */
 	public boolean replenish() {
 		xchg.replenish(deck);
-		endOfGame = mkt.refill(tiles);
+		endOfGame = mkt.refill();
 		return endOfGame;
 	}
 
 	/**
-	 * Generte scores for the round
+	 * Generate scores for the round
 	 * @param round the round number (0, 1, or 2)
 	 */
 	public void triggerScoringRound(int round) {
@@ -153,6 +152,20 @@ public class Game implements Serializable {
 	 */
 	public void discardTo(CardSet cs) {
 		deck.discard(cs.cards);
+	}
+	
+	/**
+	 * @return the currently active player
+	 */
+	public Player getCurPlayer() {
+		return participants.get(turnOrder.cur());
+	}
+
+	/**
+	 * @return the unique garden tile
+	 */
+	public Tile getGarden() {
+		return tiles.getGarden();
 	}
 
 }

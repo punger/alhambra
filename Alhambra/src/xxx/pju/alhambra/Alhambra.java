@@ -6,6 +6,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import xxx.pju.alhambra.Tile.Family;
+
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 
@@ -18,47 +20,11 @@ public class Alhambra implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Utility class that encapsulates x and y coordinates
-	 * @author paulu
-	 *
-	 */
-	private static class Point implements Serializable {
-		private static final long serialVersionUID = 1L;
-		private int x = 0;
-		private int y = 0;
-		public int getX() {
-			return x;
-		}
-		public int getY() {
-			return y;
-		}
-		public Point(int x, int y) {
-			super();
-			this.x = x;
-			this.y = y;
-		}
-		
-		void displace(Point o) {
-			if (o == null) return;
-			x += o.x;
-			y += o.y;
-		}
-		
-		@SuppressWarnings("unused")
-		Point add(Point o) {
-			if (o == null) return this;
-			Point p = this;
-			p.displace(o);
-			return p;
-		}
-	}
-	
-	/**
 	 * Maps each direction to the deltas required to refer to the location
 	 * in that direction.
 	 */
 	private static final EnumMap<Direction, Point> dirDelta = 
-			new EnumMap<>(Direction.class);
+			new EnumMap<Direction, Point>(Direction.class);
 	static {
 		Point left = new Point(-1, 0);
 		Point up = new Point(0, 1);
@@ -71,7 +37,7 @@ public class Alhambra implements Serializable {
 	}
 	
 	/// The place where all the tiles live
-	private Area mat = new Area();
+	private Area mat = null;
 
 	/**
 	 * Represents the two dimensional play area where tiles are placed.
@@ -137,9 +103,10 @@ public class Alhambra implements Serializable {
 
 		/**
 		 * Area constructor puts a garden tile at the origin
+		 * @param garden the start tile
 		 */
-		public Area() {
-			put(0, 0, new Tile());
+		public Area(Tile garden) {
+			put(0, 0, garden);
 		}
 		/**
 		 * The tile in the location in the given direction of 
@@ -165,7 +132,7 @@ public class Alhambra implements Serializable {
 		 */
 		private EnumMap<Direction, Tile> getNeighbors(int x, int y) {
 			EnumMap<Direction, Tile> neighbors = 
-					new EnumMap<>(Direction.class);
+					new EnumMap<Direction, Tile>(Direction.class);
 			for (Direction d : Direction.values()) {
 				Tile t = thisAWay(x, y, d);
 				neighbors.put(d,  t);
@@ -218,7 +185,7 @@ public class Alhambra implements Serializable {
 		 * the list will be empty if there are no such points.
 		 */
 		List<Point> getValidLocations(Tile candidate) {
-			ArrayList<Point> okLocs = new ArrayList<>(); 
+			ArrayList<Point> okLocs = new ArrayList<Point>(); 
 			for (int x = minX; x <= maxX; x++) {
 				for (int y = minY; y <= maxY; y++) {
 					if (canPlaceTile(x, y, candidate)){
@@ -267,9 +234,11 @@ public class Alhambra implements Serializable {
 	}
 
 	/**
-	 * Empty constructor
+	 * Construct with the garden
+	 * @param garden the concrete garden tile
 	 */
-	public Alhambra() {
+	public Alhambra(Tile garden) {
+		mat = new Area(garden);
 	}
 	
 	/**
@@ -279,7 +248,7 @@ public class Alhambra implements Serializable {
 	 */
 	public EnumMap<Tile.Family, Integer> buildingCounts() {
 		EnumMap<Tile.Family, AtomicInteger>  freqs = 
-				new EnumMap<>(Tile.Family.class);
+				new EnumMap<Tile.Family, AtomicInteger>(Tile.Family.class);
 		for (Tile t : mat.getAllTiles()) {
 			Tile.Family color = t.getColor();
 			if (freqs.containsKey(color)) {
@@ -290,7 +259,7 @@ public class Alhambra implements Serializable {
 			}
 		}
 		EnumMap<Tile.Family, Integer> colorCounts = 
-				new EnumMap<>(Tile.Family.class);
+				new EnumMap<Family, Integer>(Tile.Family.class);
 		for (Tile.Family color : Tile.Family.values()) {
 			colorCounts.put(color, new Integer(freqs.get(color).get()));
 		}
@@ -338,4 +307,15 @@ public class Alhambra implements Serializable {
 	 *         configuration that the tiles are laid out in
 	 */
 	public Tile[][]getTileArray() { return mat.getTileArray(); }
+	
+	public int getCenterX() { return -mat.minX; }
+	public int getCenterY() { return -mat.minY; }
+
+	public Point getMins() {
+		return new Point(mat.minX, mat.minY);
+	}
+
+	public Point getMaxs() {
+		return new Point(mat.maxX, mat.maxY);
+	}
 }
