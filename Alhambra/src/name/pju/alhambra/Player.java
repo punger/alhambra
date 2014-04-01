@@ -149,7 +149,7 @@ public class Player implements Serializable {
 			return null;
 		ArrayList<Integer> vals = new ArrayList<Integer>();
 		CardSet potentialPmt = hand.cardsOfColor(spot);
-		for (Card c : potentialPmt.cards) {
+		for (Card c : potentialPmt.getCards()) {
 			vals.add(new Integer(c.value()));
 		}
 		PowerSetResolver res = new PowerSetResolver(vals);
@@ -158,7 +158,7 @@ public class Player implements Serializable {
 		Payment p = new Payment();
 		for (int i = 0; key > 0; key /= 2, i++) {
 			if (key % 2 != 0) 
-				p.addCard(potentialPmt.cards.get(i));
+				p.addCard(potentialPmt.getCards().get(i));
 		}
 		return p;
 	}

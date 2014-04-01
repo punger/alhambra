@@ -12,7 +12,13 @@ public class CardSet  {
 	/**
 	 * Card storage collection
 	 */
-	protected ArrayList<Card> cards = new ArrayList<Card>();
+	private ArrayList<Card> cards = new ArrayList<Card>();
+	public ArrayList<Card> getCards() {
+		return cards;
+	}
+	public void setCards(ArrayList<Card> cards) {
+		this.cards = cards;
+	}
 	public void addCard(Card c) {
 		cards.add(c);
 	}

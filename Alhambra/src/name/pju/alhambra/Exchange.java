@@ -1,16 +1,14 @@
 package name.pju.alhambra;
 
-import java.io.Serializable;
 
 /**
  * Represents the Exchange, where cards are on offer.
  */
-public class Exchange implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Exchange extends CardSet {
 	/** Maximum value of cards when more than one is being taken */
 	private static final int MULTICARDSUM = 5;
-	/** Available places for cards */
-	private Card slots[] = new Card[4];
+	/** Number of slots in the exchange */
+	private static final int NUMSLOTS = 4;
 	/** Pointer to the overarching game this exchange participates in */
 	private Game g;
 	/**
@@ -27,14 +25,12 @@ public class Exchange implements Serializable {
 	 * @param deck deck to draw from
 	 */
 	public void replenish(Deck deck) {
-		for (int i = 0; i < slots.length; i++) {
-			if (slots[i] == null) {
-				int round = deck.isScoringRound(); 
-				if (round != 0)
-					g.triggerScoringRound(round);
-				slots[i] = deck.deal();
-				
-			}
+		while(getCards().size() < NUMSLOTS) {
+			int round = deck.isScoringRound(); 
+			if (round != 0)
+				g.triggerScoringRound(round);
+			addCard(deck.deal());
+			
 		}
 	}
 	/**
@@ -50,15 +46,15 @@ public class Exchange implements Serializable {
 	 * @return the modified CardSet with new cards if added
 	 */
 	public CardSet claim(int cardFromSlot, CardSet cs) {
-		if (cardFromSlot >= 0 && cardFromSlot < slots.length) {
-			Card c = slots[cardFromSlot];
+		if (cardFromSlot >= 0 && cardFromSlot < NUMSLOTS) {
+			Card c = getCards().get(cardFromSlot);
 			if (cs == null)
 				cs = new CardSet();
 			int curWorth = cs.totalWorth();
 			if (c != null) {
 				if (curWorth == 0 || c.value() + curWorth <= MULTICARDSUM) {
 					cs.addCard(c);
-					slots[cardFromSlot] = null;
+					getCards().remove(cardFromSlot);
 				}
 			}
 		}
@@ -73,6 +69,19 @@ public class Exchange implements Serializable {
 		return claim(cardFromSlot, null);
 	}
 	/**
+	 * Claim a card by identity
+	 * @param cc target card to take
+	 * @param cs set to add it to if not null
+	 * @return a CardSet that contains the card if it could be claimed
+	 */
+	public CardSet claim(Card cc, CardSet cs) {
+		if (getCards().contains(cc)) {
+			int slot = getCards().indexOf(cc);
+			return claim(slot, cs);
+		}
+		return cs;
+	}
+	/**
 	 * The user chickened out and is returning the cards to their slots without
 	 * actually using them.
 	 * @param cs
@@ -80,15 +89,13 @@ public class Exchange implements Serializable {
 	 * in the exchange
 	 */
 	public boolean restoreClaimedCards(CardSet cs) {
-		for (int i = 0; i < slots.length && !cs.isEmpty(); i++) {
-			if (slots[i] == null) {
-				slots[i] = cs.cards.get(0);
-				cs.cards.remove(0);
-			}
+		while(getCards().size() < NUMSLOTS) {
+			if (cs.isEmpty()) return false;
+			Card c = cs.getCards().get(0);
+			addCard(c);;
+			cs.getCards().remove(0);
 		}
 		return cs.isEmpty();
 	}
-	
-	
 
 }

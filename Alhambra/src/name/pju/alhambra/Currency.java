@@ -27,10 +27,12 @@ public class Currency extends Card implements Serializable {
 		this.denomination = denomination;
 	}
 	@Override
+	public
 	MarketColor getColor() {
 		return getType().canBuy();
 	}
 	@Override
+	public
 	int value() {
 		return denomination;
 	}

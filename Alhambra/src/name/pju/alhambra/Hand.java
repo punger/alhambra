@@ -1,6 +1,5 @@
 package name.pju.alhambra;
 
-import java.io.Serializable;
 import java.util.EnumMap;
 
 
@@ -9,18 +8,16 @@ import java.util.EnumMap;
  * @author paulu
  *
  */
-public class Hand extends CardSet implements Serializable {
-	private static final long serialVersionUID = 1L;
-
+public class Hand extends CardSet {
 	public Hand() {
 		super();
 	}
 	public Hand(CardSet cs) {
-		cards = cs.cards;
+		setCards(cs.getCards());
 	}
 	public int valueOfColor(MarketColor m) {
 		int v = 0;
-		for (Card c : cards) {
+		for (Card c : getCards()) {
 			if (c.getColor().equals(m)) {
 				v += c.value();
 			}
@@ -29,7 +26,7 @@ public class Hand extends CardSet implements Serializable {
 	}
 	public EnumMap<MarketColor, Integer> values() {
 		EnumMap<MarketColor, Integer> vals = new EnumMap<MarketColor, Integer>(MarketColor.class);
-		for (Card c : cards) {
+		for (Card c : getCards()) {
 			int iv = c.value();
 			MarketColor m = c.getColor();
 			if (vals.containsKey(m)) {
@@ -42,7 +39,7 @@ public class Hand extends CardSet implements Serializable {
 	}
 	public CardSet cardsOfColor(MarketColor spot) {
 		CardSet cs = new CardSet();
-		for (Card c : cards) {
+		for (Card c : getCards()) {
 			if (c.getColor().equals(spot))
 				cs.addCard(c);
 		}
@@ -50,14 +47,14 @@ public class Hand extends CardSet implements Serializable {
 	}
 	public boolean discardFrom(CardSet cs) {
 		boolean allPresent = true;
-		for (Card c : cs.cards) {
-			if (cards.contains(c)) {
-				cards.remove(c);
+		for (Card c : cs.getCards()) {
+			if (getCards().contains(c)) {
+				getCards().remove(c);
 			} else allPresent = false;
 		}
 		return allPresent;
 	}
 	public boolean wasSelectedFrom(CardSet cs) {
-		return cards.containsAll(cs.cards);
+		return getCards().containsAll(cs.getCards());
 	}
 }

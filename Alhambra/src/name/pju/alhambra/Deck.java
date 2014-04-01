@@ -21,8 +21,8 @@ public class Deck extends CardSet {
 	 * @param cs initial list of cards 
 	 */
 	public Deck(CardSet cs) {
-		cards = cs.cards;
-		Collections.shuffle(cards);
+		setCards(cs.getCards());
+		Collections.shuffle(getCards());
 	}
 	
 	/**
@@ -44,12 +44,12 @@ public class Deck extends CardSet {
 		if (isEmpty()) {
 			if (discards.isEmpty())
 				return null;
-			cards.addAll(discards.cards);
-			Collections.shuffle(cards);
+			getCards().addAll(discards.getCards());
+			Collections.shuffle(getCards());
 		}
 		
-		Card next = cards.get(0);
-		cards.remove(0);
+		Card next = getCards().get(0);
+		getCards().remove(0);
 		round1--; round2--;
 		return next;
 	}
@@ -61,8 +61,8 @@ public class Deck extends CardSet {
 	 * actions have been taken.
 	 */
 	public void assignScoringTimes() {
-		round1 = cards.size() / 3;
-		round2 = (2 * cards.size()) / 3; 
+		round1 = getCards().size() / 3;
+		round2 = (2 * getCards().size()) / 3; 
 	}
 	/**
 	 * Return a card to the discard pile
@@ -76,7 +76,7 @@ public class Deck extends CardSet {
 	 * @param cs the set to be discarded
 	 */
 	public void discard(Collection<Card> cs) {
-		discards.cards.addAll(cs);
+		discards.getCards().addAll(cs);
 	}
 	
 

@@ -64,11 +64,17 @@ public class Game {
 	private PlayerOrder turnOrder;
 	private Scorer sc;
 	
+	/**
+	 * For all the current players, initialize them with a starting board and
+	 * generate the starting hands.
+	 * @param geeks players playing
+	 */
 	private void setupPlayers(EnumSet<PlayerColor> geeks) {
 		// instantiate players
 		PlayerColor startPlayer = null;
 		List<PlayerColor> meepleList = new ArrayList<PlayerColor>();
 		int leastMoney = 100;
+		int fewestCards = 100;
 		for (PlayerColor meeple : geeks) {
 			Player p = new Player(this, meeple);
 			participants.put(meeple, p);
@@ -78,9 +84,14 @@ public class Game {
 				initialHandValue += c.value();
 				p.addCard(c);
 			}
-			if (initialHandValue < leastMoney) {
-				leastMoney = initialHandValue;
-				startPlayer = meeple;
+			if (initialHandValue <= leastMoney) {
+				if (initialHandValue < leastMoney
+						|| p.getHand().getCards().size() < fewestCards) 
+				{
+					leastMoney = initialHandValue;
+					fewestCards = p.getHand().getCards().size();
+					startPlayer = meeple;
+				}
 			}
 			players.add(p);
 			meepleList.add(meeple);
@@ -94,12 +105,15 @@ public class Game {
 	/**
 	 * Initialize the game with the players
 	 * @param geeks set of players by color
+	 * @param cs 
+	 * @param bag 
 	 */
 	public Game (EnumSet<PlayerColor> geeks, CardSet cs, BagOfTiles bag) {
+		tiles = bag;
 		this.deck = new Deck(cs);
-		setupPlayers(geeks);
-		mkt = new Market(bag);
+		mkt = new Market(tiles);
 		populateMarket();
+		setupPlayers(geeks);
 		fillExchange();
 		deck.assignScoringTimes();
 		sc = new Scorer(participants);
@@ -138,6 +152,8 @@ public class Game {
 		}
 		
 	}
+	
+	public Exchange getExchange() { return xchg; }
 
 	/**
 	 * @return market
@@ -151,14 +167,22 @@ public class Game {
 	 * @param cs set of cards to discard
 	 */
 	public void discardTo(CardSet cs) {
-		deck.discard(cs.cards);
+		deck.discard(cs.getCards());
 	}
 	
 	/**
 	 * @return the currently active player
 	 */
 	public Player getCurPlayer() {
-		return participants.get(turnOrder.cur());
+		return getPlayer(turnOrder.cur());
+	}
+
+	/**
+	 * @param pc color of the player to retrieve
+	 * @return the currently active player
+	 */
+	public Player getPlayer(PlayerColor pc) {
+		return participants.get(pc);
 	}
 
 	/**
