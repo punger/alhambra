@@ -1,6 +1,5 @@
 package name.pju.alhambra;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -10,13 +9,12 @@ import java.util.Set;
  * @author paulu
  *
  */
-public class Player implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Player {
 	private Hand hand = new Hand();
 	private Alhambra alh = null;
-	private List<Tile> reserveBoard;
+	private List<Tile> reserveBoard = new ArrayList<Tile>();
 	private int score;
-	private Set<Tile> unattached = new HashSet<Tile>();
+	private List<Tile> unattached = new ArrayList<Tile>();
 	private Game g;
 	
 	private int actions = 0;
@@ -34,7 +32,7 @@ public class Player implements Serializable {
 	public int getScore() {
 		return score;
 	}
-	public Set<Tile> getUnattached() {
+	public List<Tile> getUnattached() {
 		return unattached;
 	}
 
@@ -95,44 +93,52 @@ public class Player implements Serializable {
 		alh = new Alhambra(g.getGarden());
 	}
 	
-	void addCard(Card c) {
+	public void addCard(Card c) {
 		hand.addCard(c);
 	}
 	
-	int numberOfColor(Tile.Family color) {
+	public void addFromExchange(CardSet cs) {
+		if (cs == null || cs.isEmpty())
+			return;
+		actions--;
+		for (Card c : cs.getCards())
+			addCard(c);
+	}
+	
+	public int numberOfColor(Tile.Family color) {
 		return 0;
 	}
 	
-	boolean canBuy(MarketColor mc) {
+	public boolean canBuy(MarketColor mc) {
 		Market m = g.getMarket();
 		Tile t = m.whatsOnOffer(mc);
 		int howMuchIHave = hand.valueOfColor(mc);
 		return howMuchIHave >= t.getCost();
 	}
 	
-	boolean buy(MarketColor mc) {
+	public Tile buy(MarketColor mc) {
 		Payment pmt = getPossiblePayment(mc);
 		return buy(mc, pmt);
 	}
 	
-	boolean buy(MarketColor mc, CardSet offer) {
+	public Tile buy(MarketColor mc, CardSet offer) {
 		if (!canBuy(mc))
-			return false;
-		if (hasActions()) return false;
+			return null;
+		if (!hasActions()) return null;
 		Market m = g.getMarket();
 		Payment pmt = new Payment(offer);
 		Tile t = m.buy(mc, pmt);
 		if (t == null)
-			return false;
+			return null;
 		unattached.add(t);
 		if (offer.totalWorth() > t.getCost())
 			actions--;
 		hand.discardFrom(offer);
 		g.discardTo(offer);
-		return true;
+		return t;
 	}
 	
-	boolean canBuy(MarketColor mc, CardSet offer) {
+	public boolean canBuy(MarketColor mc, CardSet offer) {
 		if (!hand.wasSelectedFrom(offer))
 			return false;
 		Hand selectedCards = new Hand(offer);

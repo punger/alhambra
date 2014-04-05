@@ -12,7 +12,6 @@ import java.util.Collections;
  *
  */
 public class Deck extends CardSet {
-	private static final long serialVersionUID = 1L;
 	/** Card offset when the scoring rounds occur */
 	private int round1, round2 = 0;
 	/** Collect the discards so that they can be reshuffled if needed */
@@ -45,6 +44,7 @@ public class Deck extends CardSet {
 			if (discards.isEmpty())
 				return null;
 			getCards().addAll(discards.getCards());
+			discards.getCards().clear();
 			Collections.shuffle(getCards());
 		}
 		

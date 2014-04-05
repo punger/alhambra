@@ -59,14 +59,17 @@ public class Game {
 			new EnumMap<PlayerColor, Player>(PlayerColor.class);
 	private List<Player> players = new ArrayList<Player>();
 	private Deck deck;
-	private Exchange xchg = new Exchange(this);
+	private Exchange xchg = new Exchange();
 	private BagOfTiles tiles;
 	private PlayerOrder turnOrder;
-	private Scorer sc;
-	
+	private ArrayList<Scorer> sc;
+    private int curRound = -1;
+    	
 	/**
 	 * For all the current players, initialize them with a starting board and
 	 * generate the starting hands.
+	 * <br>
+	 * Sets up the start player and sets order
 	 * @param geeks players playing
 	 */
 	private void setupPlayers(EnumSet<PlayerColor> geeks) {
@@ -101,32 +104,23 @@ public class Game {
 		
 	}
 	
-	
 	/**
 	 * Initialize the game with the players
 	 * @param geeks set of players by color
-	 * @param cs 
-	 * @param bag 
+	 * @param cs a set of cards
+	 * @param bag all tiles
 	 */
 	public Game (EnumSet<PlayerColor> geeks, CardSet cs, BagOfTiles bag) {
 		tiles = bag;
 		this.deck = new Deck(cs);
 		mkt = new Market(tiles);
-		populateMarket();
+		mkt.refill();
 		setupPlayers(geeks);
-		fillExchange();
+		xchg.replenish(deck);
 		deck.assignScoringTimes();
-		sc = new Scorer(participants);
+		sc = new ArrayList<Scorer>(3);
 	}
 	
-	private void fillExchange() {
-		xchg.replenish(deck);
-	}
-
-	private void populateMarket() {
-		mkt.refill();
-	}
-
 	/**
 	 * Fixes up the game setup after every turn.
 	 * 
@@ -134,10 +128,11 @@ public class Game {
 	 * refilled.
 	 * @return true when the game has ended and final scoring must be done
 	 */
-	public boolean replenish() {
-		xchg.replenish(deck);
-		endOfGame = mkt.refill();
-		return endOfGame;
+	public int replenish() {
+		int round = xchg.replenish(deck);
+		if (mkt.refill())
+			return 3;
+		return round;
 	}
 
 	/**
@@ -145,12 +140,14 @@ public class Game {
 	 * @param round the round number (0, 1, or 2)
 	 */
 	public void triggerScoringRound(int round) {
-		EnumMap<PlayerColor, Integer> scoreForRound = sc.getScores(round);
+		curRound = round;
+		Scorer curScorer = new Scorer(participants, round);
+		EnumMap<PlayerColor, Integer> scoreForRound = curScorer.getScores();
+		sc.add(round, curScorer);
 		for (PlayerColor meeple : participants.keySet()) {
 			Player geek = participants.get(meeple);
 			geek.addToScore(scoreForRound.get(meeple).intValue());
 		}
-		
 	}
 	
 	public Exchange getExchange() { return xchg; }
@@ -190,6 +187,20 @@ public class Game {
 	 */
 	public Tile getGarden() {
 		return tiles.getGarden();
+	}
+	
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+	public void endgame() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public PlayerColor endTurn() {
+		getPlayer(turnOrder.cur()).endTurn();
+		return turnOrder.next();
 	}
 
 }

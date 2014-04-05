@@ -1,17 +1,16 @@
 package name.pju.alhambra;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Arrays;
 
 import com.google.common.collect.ImmutableMap;
 
-public class Scorer implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class Scorer {
 	private EnumMap<PlayerColor, Player> players;
+	private int round = 0;
 	private static final class ColorScore {
 		private static final ImmutableMap<Tile.Family, List<Integer>> first =
 			       new ImmutableMap.Builder<Tile.Family, List<Integer>>()
@@ -96,11 +95,12 @@ public class Scorer implements Serializable {
 		}
 	}
 
-	public Scorer( EnumMap<PlayerColor, Player> everyone){
+	public Scorer( EnumMap<PlayerColor, Player> everyone, int round){
 		players = everyone;
+		this.round = round;
 	}
 	
-	public EnumMap<PlayerColor, Integer> getScores(int round) {
+	public EnumMap<PlayerColor, Integer> getScores() {
 		EnumMap<PlayerColor, Integer> scorePerPlayer = new EnumMap<PlayerColor, Integer>(
 				PlayerColor.class);
 		// Initialize scores to zero

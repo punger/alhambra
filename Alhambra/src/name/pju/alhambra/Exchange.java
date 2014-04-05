@@ -9,29 +9,27 @@ public class Exchange extends CardSet {
 	private static final int MULTICARDSUM = 5;
 	/** Number of slots in the exchange */
 	private static final int NUMSLOTS = 4;
-	/** Pointer to the overarching game this exchange participates in */
-	private Game g;
+	
 	/**
-	 * Initialize the card exchange with a pointer to the game this exchange
-	 * participates in.  The game is the owner of the deck used to deal into
-	 * the exchange.
-	 * @param g game this exchange is for
+	 * empty constructor
 	 */
-	public Exchange(Game g) {
-		this.g = g;
-	}
+	public Exchange() {}
+
 	/**
 	 * Fill any open slots with cards from the deck
-	 * @param deck deck to draw from
+	 * 
+	 * @param deck
+	 *            deck to draw from
+	 * @return zero normally or a positive number to indicate the round has
+	 *         ended
 	 */
-	public void replenish(Deck deck) {
+	public int replenish(Deck deck) {
+		int round = 0;
 		while(getCards().size() < NUMSLOTS) {
-			int round = deck.isScoringRound(); 
-			if (round != 0)
-				g.triggerScoringRound(round);
+			if (round == 0) round = deck.isScoringRound(); 
 			addCard(deck.deal());
-			
 		}
+		return round;
 	}
 	/**
 	 * Claim a card from a named slot and add it to the target CardSet.
@@ -84,7 +82,7 @@ public class Exchange extends CardSet {
 	/**
 	 * The user chickened out and is returning the cards to their slots without
 	 * actually using them.
-	 * @param cs
+	 * @param cs source cardset
 	 * @return true if all the cards in the provided set could be put back
 	 * in the exchange
 	 */

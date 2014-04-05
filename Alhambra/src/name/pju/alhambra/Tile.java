@@ -13,7 +13,7 @@ import java.util.Set;
  * @author paulu
  *
  */
-public class Tile {
+public abstract class Tile {
 	public enum Family {blue, orange, brown, white, green, purple, garden}
 	private Family color;
 	private int cost;
@@ -33,7 +33,6 @@ public class Tile {
 	}
 	
 	public Tile(Family color, int cost, Set<Direction> w) {
-		super();
 		this.color = color;
 		this.cost = cost;
 		walls.addAll(w);

@@ -33,7 +33,7 @@ public class CardSet  {
 	}
 	/**
 	 * Initialize a set of cards from any kind of collection of cards
-	 * @param s
+	 * @param s a collection of cards
 	 */
 	public CardSet(Collection<Card> s) {
 		cards = new ArrayList<Card>(s);
