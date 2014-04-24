@@ -27,9 +27,9 @@ public class Alhambra implements Serializable {
 			new EnumMap<Direction, Point>(Direction.class);
 	static {
 		Point left = new Point(-1, 0);
-		Point up = new Point(0, 1);
+		Point down = new Point(0, 1);
 		Point right = new Point(1, 0);
-		Point down = new Point(0, -1);
+		Point up = new Point(0, -1);
 		dirDelta.put(Direction.north, up);
 		dirDelta.put(Direction.east, right);
 		dirDelta.put(Direction.south, down);
@@ -155,6 +155,7 @@ public class Alhambra implements Serializable {
 			boolean canReach = false;
 			for (Direction d : folks.keySet()) {
 				Tile neighbor = folks.get(d);
+				if (neighbor == null) continue;
 				if (!t.canAdjoin(neighbor, d))
 					return false;
 				if (!t.hasWall(d)) 
@@ -279,11 +280,11 @@ public class Alhambra implements Serializable {
 	 * For a given tile, the locations at which the tile can legally be put.
 	 * 
 	 * @param candidate
-	 *            at tile that might be placed
+	 *            a tile that might be placed
 	 * @return a list of points at which the tile can be placed; the list will
 	 *         be empty if there are no such points.
 	 */
-	List<Point> getValidLocations(Tile candidate) {
+	public List<Point> getValidLocations(Tile candidate) {
 		return mat.getValidLocations(candidate);
 	}
 

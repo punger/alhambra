@@ -101,6 +101,7 @@ public class Game {
 		}
 		turnOrder = new PlayerOrder(meepleList);
 		turnOrder.setStart(startPlayer);
+		getCurPlayer().startTurn();
 		
 	}
 	
@@ -130,7 +131,7 @@ public class Game {
 	 */
 	public int replenish() {
 		int round = xchg.replenish(deck);
-		if (mkt.refill())
+		if (!mkt.refill())
 			return 3;
 		return round;
 	}
@@ -150,6 +151,9 @@ public class Game {
 		}
 	}
 	
+	/**
+	 * @return exchange
+	 */
 	public Exchange getExchange() { return xchg; }
 
 	/**
@@ -176,7 +180,7 @@ public class Game {
 
 	/**
 	 * @param pc color of the player to retrieve
-	 * @return the currently active player
+	 * @return the player with that color
 	 */
 	public Player getPlayer(PlayerColor pc) {
 		return participants.get(pc);
@@ -189,18 +193,26 @@ public class Game {
 		return tiles.getGarden();
 	}
 	
+	/**
+	 * @return all players as a list.
+	 */
 	public List<Player> getPlayers() {
 		return players;
 	}
 
 	public void endgame() {
-		// TODO Auto-generated method stub
+		// TODO End the game. TBD
 		
 	}
 
+	/**
+	 * End the current player's turn.
+	 * @return the color of the next player
+	 */
 	public PlayerColor endTurn() {
-		getPlayer(turnOrder.cur()).endTurn();
-		return turnOrder.next();
+		return turnOrder.cur();
+//		getPlayer(turnOrder.cur()).endTurn();
+//		return turnOrder.next();
 	}
 
 }

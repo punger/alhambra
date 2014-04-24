@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * @author paulu
  *
@@ -173,7 +175,7 @@ public class Player {
 		return actions > 0;
 	}
 	public void startTurn() {
-		actions = 1;
+		actions = 100;
 	}
 	
 	public void endTurn() {
@@ -183,6 +185,14 @@ public class Player {
 	}
 	public void addToScore(int scoreForRound) {
 		score += scoreForRound;
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+				append("color", meeple.name()).
+				append("hand", hand).
+				append("reserve", reserveBoard.toArray(new Tile[reserveBoard.size()])).
+				toString();
 	}
 
 

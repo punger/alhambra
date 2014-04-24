@@ -3,6 +3,8 @@ package name.pju.alhambra;
 import java.io.Serializable;
 import java.util.EnumMap;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * Represents the marketplace where tiles can be bought.  There are four 
  * slots, one in each of the main currency colors.  The marketplace owns
@@ -26,19 +28,29 @@ public class Market implements Serializable {
 
 	/**
 	 * Attempt to buy the tile at the given market stall with the cards in the
-	 * offer
+	 * offer.<br>
+	 * Note this does not modify the player's hand if successful.
 	 * @param spot color of stall the caller is attempting to buy from
 	 * @param offer a set of cards that should meet or exceed the price of 
 	 * the tile
 	 * @return the bought tile if the offer is acceptable; null otherwise
 	 */
 	public Tile buy(MarketColor spot, Payment offer) {
-		MarketColor target = offer.totalColor();
-		if (!spot.equals(target)) return null;
 		Tile item = availableTiles.get(spot);
-		if (item.getCost() > offer.value()) return null;
+		if (item.getCost() > offerWorth(spot, offer)) return null;
 		availableTiles.remove(spot);
 		return item;
+	}
+	
+	private int offerWorth(MarketColor spot, Payment offer) {
+		MarketColor target = offer.totalColor();
+		if (!spot.equals(target)) return 0;
+		return offer.value();
+	}
+	
+	public boolean isExactOffer(MarketColor spot, Payment offer) {
+		Tile item = availableTiles.get(spot);
+		return item.getCost() == offerWorth(spot, offer);
 	}
 	
 	/**
@@ -57,12 +69,23 @@ public class Market implements Serializable {
 		return true;
 	}
 	/**
-	 * Retrieve the tile that is availavle at the given stall
+	 * Retrieve the tile that is available at the given stall
 	 * @param spot stall to look at
 	 * @return the tile available at the stall
 	 */
 	public Tile whatsOnOffer(MarketColor spot) {
 		return availableTiles.get(spot);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+				append("yellow", availableTiles.get(MarketColor.yellow)).
+				append("green", availableTiles.get(MarketColor.green)).
+				append("blue", availableTiles.get(MarketColor.blue)).
+				append("orange", availableTiles.get(MarketColor.orange)).
+				toString();
+
 	}
 
 }

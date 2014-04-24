@@ -2,6 +2,8 @@ package name.pju.alhambra;
 
 import java.util.EnumMap;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 
 /**
  * Represents the hand 
@@ -56,5 +58,12 @@ public class Hand extends CardSet {
 	}
 	public boolean wasSelectedFrom(CardSet cs) {
 		return getCards().containsAll(cs.getCards());
+	}
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+				appendSuper(super.toString ()).
+				toString();
+
 	}
 }

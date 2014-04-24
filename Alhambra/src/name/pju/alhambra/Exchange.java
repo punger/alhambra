@@ -1,10 +1,19 @@
 package name.pju.alhambra;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 
 /**
  * Represents the Exchange, where cards are on offer.
  */
 public class Exchange extends CardSet {
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+				appendSuper(super.toString ()).
+				toString();
+
+	}
 	/** Maximum value of cards when more than one is being taken */
 	private static final int MULTICARDSUM = 5;
 	/** Number of slots in the exchange */

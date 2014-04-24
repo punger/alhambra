@@ -3,6 +3,8 @@ package name.pju.alhambra;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 /**
  * Basic class that implements a collection of cards
  * @author paulu
@@ -53,6 +55,12 @@ public class CardSet  {
 		}
 		return val;
 	}
-	
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).
+				append("cards", cards.toArray(new Card[cards.size()])).
+				toString();
+
+	}	
 
 }
