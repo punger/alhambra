@@ -102,7 +102,7 @@ public class Player {
 	public void addFromExchange(CardSet cs) {
 		if (cs == null || cs.isEmpty())
 			return;
-		actions--;
+		consumeAction();
 		for (Card c : cs.getCards())
 			addCard(c);
 	}
@@ -114,6 +114,7 @@ public class Player {
 	public boolean canBuy(MarketColor mc) {
 		Market m = g.getMarket();
 		Tile t = m.whatsOnOffer(mc);
+		if (t == null) return false;
 		int howMuchIHave = hand.valueOfColor(mc);
 		return howMuchIHave >= t.getCost();
 	}
@@ -134,7 +135,7 @@ public class Player {
 			return null;
 		unattached.add(t);
 		if (offer.totalWorth() > t.getCost())
-			actions--;
+			consumeAction();
 		hand.discardFrom(offer);
 		g.discardTo(offer);
 		return t;
@@ -175,7 +176,7 @@ public class Player {
 		return actions > 0;
 	}
 	public void startTurn() {
-		actions = 100;
+		actions = 1;
 	}
 	
 	public void endTurn() {
@@ -193,6 +194,9 @@ public class Player {
 				append("hand", hand).
 				append("reserve", reserveBoard.toArray(new Tile[reserveBoard.size()])).
 				toString();
+	}
+	public void consumeAction() {
+		if (actions > 0) actions--;
 	}
 
 

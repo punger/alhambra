@@ -126,8 +126,13 @@ public class Game {
 	 * Fixes up the game setup after every turn.
 	 * 
 	 * Determines if the game has ended because the market cannot be 
-	 * refilled.
-	 * @return true when the game has ended and final scoring must be done
+	 * refilled. (3)
+	 * 
+	 * Determines if a scoring round has been reached. (1 or 2)
+	 * 
+	 * Normal (0)
+	 * 
+	 * @return number indicating the round or continuation
 	 */
 	public int replenish() {
 		int round = xchg.replenish(deck);
@@ -138,13 +143,16 @@ public class Game {
 
 	/**
 	 * Generate scores for the round
-	 * @param round the round number (0, 1, or 2)
+	 * @param round the round number (1, 2, or 3)
 	 */
 	public void triggerScoringRound(int round) {
+		if (round <= 0 || round > 3) {
+			return;
+		}
 		curRound = round;
 		Scorer curScorer = new Scorer(participants, round);
 		EnumMap<PlayerColor, Integer> scoreForRound = curScorer.getScores();
-		sc.add(round, curScorer);
+		sc.add(round-1, curScorer);
 		for (PlayerColor meeple : participants.keySet()) {
 			Player geek = participants.get(meeple);
 			geek.addToScore(scoreForRound.get(meeple).intValue());
@@ -210,6 +218,7 @@ public class Game {
 	 * @return the color of the next player
 	 */
 	public PlayerColor endTurn() {
+		getCurPlayer().endTurn();
 		return turnOrder.cur();
 //		getPlayer(turnOrder.cur()).endTurn();
 //		return turnOrder.next();

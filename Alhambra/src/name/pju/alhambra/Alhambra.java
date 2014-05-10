@@ -150,6 +150,7 @@ public class Alhambra implements Serializable {
 		 */
 		public boolean canPlaceTile(int x, int y, Tile t) {
 			if (!inBounds(x, y)) return false;
+			if (get(x,y) != null) return false;
 			EnumMap<Direction, Tile> folks = getNeighbors(x, y);
 			if (folks.isEmpty()) return false;
 			boolean canReach = false;
@@ -256,13 +257,15 @@ public class Alhambra implements Serializable {
 				AtomicInteger ai = freqs.get(color);
 				ai.getAndIncrement();
 			} else {
-				freqs.put(color, new AtomicInteger());
+				freqs.put(color, new AtomicInteger(1));
 			}
 		}
 		EnumMap<Tile.Family, Integer> colorCounts = 
 				new EnumMap<Family, Integer>(Tile.Family.class);
 		for (Tile.Family color : Tile.Family.values()) {
-			colorCounts.put(color, new Integer(freqs.get(color).get()));
+			if (freqs.containsKey(color))
+				colorCounts.put(color, new Integer(freqs.get(color).get()));
+			else colorCounts.put(color, new Integer(0));
 		}
 		return colorCounts;
 	}

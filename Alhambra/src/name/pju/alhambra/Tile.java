@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  *
  */
 public abstract class Tile {
-	public enum Family {blue, orange, brown, white, green, purple, garden}
+	public enum Family {blue, orange, brown, white, green, purple, garden, other}
 	private Family color;
 	private int cost;
 	private Set<Direction> walls = new HashSet<Direction>();

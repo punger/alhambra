@@ -21,6 +21,7 @@ public class Scorer {
 			           .put(Tile.Family.green, Arrays.asList(5, 0, 0))
 			           .put(Tile.Family.purple, Arrays.asList(6, 0, 0))
 			           .put(Tile.Family.garden, Arrays.asList(0, 0, 0))
+			           .put(Tile.Family.other, Arrays.asList(0, 0, 0))
 			           .build();
 		private static final ImmutableMap<Tile.Family, List<Integer>> second =
 			       new ImmutableMap.Builder<Tile.Family, List<Integer>>()
@@ -31,6 +32,7 @@ public class Scorer {
 			           .put(Tile.Family.green, Arrays.asList(12, 5, 0))
 			           .put(Tile.Family.purple, Arrays.asList(13, 6, 0))
 			           .put(Tile.Family.garden, Arrays.asList(0, 0, 0))
+			           .put(Tile.Family.other, Arrays.asList(0, 0, 0))
 			           .build();
 		private static final ImmutableMap<Tile.Family, List<Integer>> last =
 			       new ImmutableMap.Builder<Tile.Family, List<Integer>>()
@@ -41,6 +43,7 @@ public class Scorer {
 			           .put(Tile.Family.green, Arrays.asList(20, 12, 5))
 			           .put(Tile.Family.purple, Arrays.asList(21, 13, 6))
 			           .put(Tile.Family.garden, Arrays.asList(0, 0, 0))
+			           .put(Tile.Family.other, Arrays.asList(0, 0, 0))
 			           .build();
 		public static int lookupScore(
 				int round, 
@@ -119,7 +122,8 @@ public class Scorer {
 				bldgAchievement.add(bldgsPerPlayer);
 			}
 			// Determine order
-			Collections.<PlayerRank>sort(bldgAchievement);
+			Collections.<PlayerRank>sort(bldgAchievement, 
+					(b1, b2) -> b2.numOfColor - b1.numOfColor);
 			// Assign scores
 			for (int rankForColor = 0; 
 					rankForColor < bldgAchievement.size(); 
@@ -128,6 +132,8 @@ public class Scorer {
 				// Determine how many players share the score
 				int sharers = 1;
 				Integer numBs = bldgAchievement.get(rankForColor).getNumOfColor();
+				// The high scorer still had zero buildings so no one gets anything
+				if (numBs == 0) continue;
 				for (int j = rankForColor + 1; 
 						j <  bldgAchievement.size() &&
 						bldgAchievement.get(j).getNumOfColor() == numBs;
