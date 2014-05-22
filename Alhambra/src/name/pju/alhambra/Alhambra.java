@@ -3,6 +3,7 @@ package name.pju.alhambra;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -69,18 +70,22 @@ public class Alhambra implements Serializable {
 		/**
 		 * Insert the tile at the given location.
 		 * 
-		 * As a side effect, change any outer bounds that may have been 
-		 * affected by this insertion. So, for instance if 3 was the 
-		 * farthest up that any tile had been inserted, maxY would be 4, one 
-		 * more than that.  If a new tile is inserted at 4, then maxY gets
-		 * incremented.  Notice that will all the bounds start at 0, when the
-		 * garden is inserted, the maxes and mins all change value.
-		 * @param x the left-right location
-		 * @param y the up-down location
-		 * @param t tile to insert
+		 * As a side effect, change any outer bounds that may have been affected
+		 * by this insertion. So, for instance if 3 was the farthest up that any
+		 * tile had been inserted, maxY would be 4, one more than that. If a new
+		 * tile is inserted at 4, then maxY gets incremented. Notice that will
+		 * all the bounds start at 0, when the garden is inserted, the maxes and
+		 * mins all change value.
+		 * 
+		 * @param x
+		 *            the left-right location
+		 * @param y
+		 *            the up-down location
+		 * @param t
+		 *            tile to insert
 		 */
 		private void put(int x, int y, Tile t) {
-			space.put(new Integer(x), new Integer(y), t);
+			space.put(x, y, t);
 			if (x == minX)
 				minX--;
 			if (x == maxX)
@@ -98,7 +103,8 @@ public class Alhambra implements Serializable {
 		 * @return the tile at (x, y) or null if none present
 		 */
 		public Tile get(int x, int y) {
-			return space.get(new Integer(x), new Integer(y));
+			return space.get(x, y);
+//			return space.get(new Integer(x), new Integer(y));
 		}
 
 		/**
@@ -124,11 +130,13 @@ public class Alhambra implements Serializable {
 
 		/**
 		 * The neighbors of a particular location.
-		 * @param x the left-right location
-		 * @param y the up-down location
-		 * @return an enumeraton for each direction of the valid
-		 * tile neighbors of the given location; empty neighbors
-		 * have null values
+		 * 
+		 * @param x
+		 *            the left-right location
+		 * @param y
+		 *            the up-down location
+		 * @return an enumeration for each direction of the valid tile neighbors
+		 *         of the given location; empty neighbors have null values
 		 */
 		private EnumMap<Direction, Tile> getNeighbors(int x, int y) {
 			EnumMap<Direction, Tile> neighbors = 
@@ -191,8 +199,7 @@ public class Alhambra implements Serializable {
 			for (int x = minX; x <= maxX; x++) {
 				for (int y = minY; y <= maxY; y++) {
 					if (canPlaceTile(x, y, candidate)){
-						Point loc = new Point(x, y);
-						okLocs.add(loc);
+						okLocs.add(new Point(x, y));
 					}
 				}
 			}
@@ -203,7 +210,7 @@ public class Alhambra implements Serializable {
 		 * 
 		 * Note that there must always be at least one, the garden that
 		 * gets instantiated at creation time.
-		 * @return a list of Tiles
+		 * @return a list of Tiles present
 		 */
 		public List<Tile> getAllTiles() {
 			List<Tile> myTiles = new ArrayList<Tile>();
@@ -218,10 +225,10 @@ public class Alhambra implements Serializable {
 		}
 		
 		/**
-		 * Unpack the mat into a rectangular array for external agents to 
+		 * Unpack the mat into a rectangular array for external agents to
 		 * examine.
-		 * @return an array containing all the tiles in correct relative 
-		 * offsets
+		 * 
+		 * @return an array containing all the tiles in correct relative offsets
 		 */
 		public Tile[][] getTileArray() {
 			Tile tileArray[][] = new Tile[maxX - minX - 1][maxY - minY - 1];
@@ -232,6 +239,28 @@ public class Alhambra implements Serializable {
 				}
 			}
 			return tileArray;
+		}
+		
+		/**
+		 * Show which sides of this tile are external walls
+		 * 
+		 * @param x
+		 *            the left-right location
+		 * @param y
+		 *            the up-down location
+		 * @return an enumeration set where the directions of the external walls
+		 *         are present
+		 */
+		public EnumSet<Direction> externalWalls(int x, int y) {
+			EnumSet<Direction> extWalls = EnumSet.noneOf(Direction.class);
+			Tile t = get(x, y);
+			if (t != null) {
+				for (Direction d : Direction.values()) {
+					if (t.hasWall(d) && thisAWay(x, y, d) == null)
+						extWalls.add(d);
+				}
+			}
+			return extWalls;
 		}
 	}
 
@@ -275,8 +304,16 @@ public class Alhambra implements Serializable {
 	 * @return number of wall segments in the longest external wall
 	 */
 	public int longestWall() {
-		// TODO: Provide algorithm for longest wall
-		return 0;
+		List<WallFinder.WallLocation> candidateWalls = new ArrayList<>();
+		for (int x = mat.minX + 1; x < mat.maxX; x++) {
+			for (int y = mat.minY + 1; y < mat.maxY; y++) {
+				EnumSet<Direction> eWalls = mat.externalWalls(x, y);
+				for (Direction d : eWalls) 
+					candidateWalls.add(new WallFinder.WallLocation(x, y, d));
+			}
+		}
+		WallFinder wf = new WallFinder(candidateWalls);
+		return wf.getMaxWall();
 	}
 	
 	/**

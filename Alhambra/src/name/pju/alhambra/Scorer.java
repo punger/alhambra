@@ -97,6 +97,12 @@ public class Scorer {
 			return numOfColor.compareTo(o.numOfColor);
 		}
 	}
+//	public static class ScoreDetail {
+//		
+//	}
+//	private EnumMap<PlayerColor, ScoreDetail> round1 = new EnumMap<PlayerColor, ScoreDetail>(PlayerColor.class);
+//	private EnumMap<PlayerColor, ScoreDetail> round2 = new EnumMap<PlayerColor, ScoreDetail>(PlayerColor.class);
+//	private EnumMap<PlayerColor, ScoreDetail> round3 = new EnumMap<PlayerColor, ScoreDetail>(PlayerColor.class);
 
 	public Scorer( EnumMap<PlayerColor, Player> everyone, int round){
 		players = everyone;
@@ -121,7 +127,7 @@ public class Scorer {
 								p.getAlh().buildingCounts().get(bldgType));
 				bldgAchievement.add(bldgsPerPlayer);
 			}
-			// Determine order
+			// Determine order: descending by number of buildings
 			Collections.<PlayerRank>sort(bldgAchievement, 
 					(b1, b2) -> b2.numOfColor - b1.numOfColor);
 			// Assign scores
@@ -162,6 +168,12 @@ public class Scorer {
 				rankForColor += sharers - 1;
 			}
 		}
+		for (PlayerColor meeple : players.keySet()) {
+			Player p = players.get(meeple);
+			scorePerPlayer.put(meeple, scorePerPlayer.get(meeple) + p.getAlh().longestWall());
+			
+		}
+
 
 		return scorePerPlayer;
 	}
